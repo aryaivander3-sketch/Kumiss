@@ -1,0 +1,496 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KUMIS | Cyber Terminal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon: #00ff99;
+            --bg: #020807;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: #d5ffed;
+            font-family: Consolas, monospace;
+            overflow-x: hidden;
+        }
+
+        canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            border-bottom: 1px solid #00ff9944;
+            background: #020807dd;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            z-index: 10;
+        }
+
+        .logo {
+            color: var(--neon);
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-shadow: 0 0 15px var(--neon);
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--neon);
+            text-shadow: 0 0 10px var(--neon);
+        }
+
+        section {
+            padding: 80px 10%;
+        }
+
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .terminal-label {
+            color: var(--neon);
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: clamp(55px, 10vw, 110px);
+            color: var(--neon);
+            text-shadow: 0 0 25px #00ff9977;
+        }
+
+        .subtitle {
+            font-size: clamp(16px, 3vw, 24px);
+            margin: 20px 0;
+            color: #b5c9c0;
+        }
+
+        .typing {
+            color: var(--neon);
+            min-height: 25px;
+            margin-bottom: 30px;
+        }
+
+        .cursor {
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 25px;
+            border: 1px solid var(--neon);
+            color: var(--neon);
+            text-decoration: none;
+            background: transparent;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--neon);
+            color: #001a0e;
+            box-shadow: 0 0 25px #00ff9977;
+        }
+
+        .panel {
+            border: 1px solid #00ff9955;
+            background: #00ff9908;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: var(--neon);
+            font-size: 26px;
+            margin-bottom: 25px;
+        }
+
+        .about-text {
+            line-height: 1.9;
+            color: #b5c9c0;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .stat {
+            padding: 10px 15px;
+            border: 1px solid #00ff9944;
+            color: var(--neon);
+            font-size: 13px;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit, minmax(200px, 1fr)
+            );
+            gap: 18px;
+        }
+
+        .project {
+            border: 1px solid #00ff9944;
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .project:hover {
+            transform: translateY(-6px);
+            border-color: var(--neon);
+            box-shadow: 0 0 20px #00ff9922;
+        }
+
+        .project h3 {
+            color: var(--neon);
+            margin-bottom: 15px;
+        }
+
+        .project p {
+            color: #b5c9c0;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .contact {
+            line-height: 2;
+            overflow-wrap: anywhere;
+        }
+
+        .contact a {
+            color: var(--neon);
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            border-top: 1px solid #00ff9933;
+            color: #6b8d7e;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 12px;
+                font-size: 12px;
+            }
+
+            section {
+                padding: 60px 6%;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <header>
+        <div class="logo">[ KUMIS ]</div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+
+        <div class="terminal-label">
+            &gt; SYSTEM ONLINE_
+        </div>
+
+        <h1>KUMIS<span class="cursor">_</span></h1>
+
+        <p class="subtitle">
+            Not just a person, but a process.
+        </p>
+
+        <p class="typing" id="typing"></p>
+
+        <a href="#projects" class="btn">
+            [ EXPLORE SYSTEM ]
+        </a>
+
+    </section>
+
+    <section id="about">
+
+        <div class="panel">
+
+            <h2 class="section-title">// ABOUT KUMIS</h2>
+
+            <p class="about-text">
+                Halo! Selamat datang di dunia KUMIS.
+                <br><br>
+                Aku tertarik dengan teknologi, coding,
+                jaringan komputer, dan dunia digital.
+                Setiap error adalah kesempatan untuk belajar
+                dan setiap proyek adalah tantangan baru.
+                <br><br>
+                Status:
+                <span style="color:#00ff99">Learning Mode</span>
+                <br>
+                Mission: Build something extraordinary.
+            </p>
+
+            <div class="stats">
+                <span class="stat">HTML / CSS</span>
+                <span class="stat">JAVASCRIPT</span>
+                <span class="stat">NETWORKING</span>
+                <span class="stat">CREATIVE THINKING</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section id="projects">
+
+        <h2 class="section-title">// PROJECT DATABASE</h2>
+
+        <div class="projects">
+
+            <div class="project">
+                <h3>01. Web Development</h3>
+                <p>
+                    Membuat website futuristik dengan animasi
+                    neon dan tampilan responsif.
+                </p>
+            </div>
+
+            <div class="project">
+                <h3>02. Network Lab</h3>
+                <p>
+                    Eksperimen jaringan komputer, konfigurasi,
+                    dan teknologi cloud.
+                </p>
+            </div>
+
+            <div class="project">
+                <h3>03. Digital Creator</h3>
+                <p>
+                    Mengubah ide kreatif menjadi proyek digital
+                    yang menarik dan bermanfaat.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section id="contact">
+
+        <div class="panel contact">
+
+            <h2 class="section-title">
+                // ESTABLISH CONNECTION
+            </h2>
+
+            <p>Welcome to the KUMIS network.</p>
+
+            <p>
+                Status:
+                <span style="color:#00ff99">ONLINE</span>
+            </p>
+
+            <p>
+                GitHub:
+                <a href="https://github.com/">
+                    Visit GitHub
+                </a>
+            </p>
+
+        </div>
+
+    </section>
+
+    <footer>
+        &copy; 2026 KUMIS | SYSTEM DESIGNED WITH CURIOSITY
+    </footer>
+
+    <script>
+        // MATRIX DIGITAL RAIN
+
+        const canvas = document.getElementById("matrix");
+        const ctx = canvas.getContext("2d");
+
+        const characters =
+            "01アイウエオカキクケコABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        const fontSize = 14;
+        let drops = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const columns = Math.ceil(
+                canvas.width / fontSize
+            );
+
+            drops = Array(columns).fill(1);
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(2, 8, 7, 0.09)";
+
+            ctx.fillRect(
+                0, 0, canvas.width, canvas.height
+            );
+
+            ctx.fillStyle = "#00ff99";
+            ctx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+
+                const char = characters[
+                    Math.floor(
+                        Math.random() * characters.length
+                    )
+                ];
+
+                ctx.fillText(
+                    char,
+                    i * fontSize,
+                    drops[i] * fontSize
+                );
+
+                if (
+                    drops[i] * fontSize > canvas.height &&
+                    Math.random() > 0.975
+                ) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        resizeCanvas();
+
+        window.addEventListener(
+            "resize", resizeCanvas
+        );
+
+        setInterval(drawMatrix, 45);
+
+
+        // TYPING ANIMATION
+
+        const messages = [
+            "Initializing KUMIS system...",
+            "Loading creativity...",
+            "Building something different...",
+            "KUMIS SYSTEM READY!"
+        ];
+
+        const typingElement =
+            document.getElementById("typing");
+
+        let messageIndex = 0;
+        let charIndex = 0;
+        let deleting = false;
+
+        function typeEffect() {
+            const message = messages[messageIndex];
+
+            if (!deleting) {
+
+                typingElement.textContent =
+                    message.substring(0, charIndex + 1);
+
+                charIndex++;
+
+                if (charIndex === message.length) {
+                    deleting = true;
+                    setTimeout(typeEffect, 1400);
+                    return;
+                }
+
+            } else {
+
+                typingElement.textContent =
+                    message.substring(0, charIndex - 1);
+
+                charIndex--;
+
+                if (charIndex === 0) {
+                    deleting = false;
+
+                    messageIndex =
+                        (messageIndex + 1) % messages.length;
+                }
+            }
+
+            setTimeout(
+                typeEffect,
+                deleting ? 35 : 65
+            );
+        }
+
+        typeEffect();
+    </script>
+
+</body>
+</html>
+```
